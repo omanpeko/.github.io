@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <script>
+    if (location.hash) {
+      const token = location.hash.match(/access_token=(.*)&scope/)[1];
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        'Client-ID': '1f3j3pbam8p9rwnhk6efqwxolf6xf8'
+      };
+
+      // ユーザー情報の取得
+      fetch('https://api.twitch.tv/helix/users', { headers })
+        .then(res => res.json())
+        .then(userInfo => {
+          alert(`ユーザー情報: ${JSON.stringify(userInfo, null, '  ')}`);
+
+          // サブスクライバー情報の取得
+          fetch(`https://api.twitch.tv/helix/subscriptions?broadcaster_id=${userInfo.data[0].id}`, { headers })
+            .then(res => res.json())
+            .then(subInfo => {
+              alert(`サブスクライバー情報: ${JSON.stringify(subInfo, null, '  ')}`);
+            })
+            .catch(console.error);
+        })
+        .catch(console.error);
+    }
+  </script>
+  <body>
+    <a href="https://id.twitch.tv/oauth2/authorize?client_id=1f3j3pbam8p9rwnhk6efqwxolf6xf8&redirect_uri=http://localhost&response_type=token&scope=user:read:email+channel:read:subscriptions">Twitch認証</a>
+  </body>
+</html>
